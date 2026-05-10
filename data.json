@@ -1,0 +1,13 @@
+[
+    {
+        "name": "History Essay",
+        "category": "Study",
+        "deadline": "Wednesday"
+    },
+    {
+        "name": "Gym Session",
+        "category": "Sport",
+        "duration": 60,
+        "calories": 450
+    }
+]
