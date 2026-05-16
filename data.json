@@ -9,5 +9,16 @@
         "category": "Sport",
         "duration": 60,
         "calories": 450
+    },
+    {
+        "name": "Interval Running",
+        "category": "Sport",
+        "duration": 25,
+        "calories": 350
+    },
+    {
+        "name": "Advanced Programming Lab",
+        "category": "Study",
+        "deadline": "Thursday"
     }
 ]

@@ -1,5 +1,18 @@
 import json
 
+def log_activity(func):
+    def wrapper(*args, **kwargs):
+        print("\n" + "="*40)
+        print("[LOG]: Starting activity registration...")
+        result = func(*args, **kwargs)
+        if result:
+            print("[LOG]: Activity registration completed successfully.")
+        else:
+            print("[LOG]: Registration skipped (Duplicate detected).")
+        print("="*40 + "\n")
+        return result
+    return wrapper
+
 class Activity:
     def __init__(self, name, category):
         self.name = name
@@ -42,7 +55,13 @@ class StudentTracker:
         with open(self.filename, "w") as file:
             json.dump(self.activities_data, file, indent=4)
 
+    @log_activity
     def add_activity(self, activity_obj):
+        for existing_activity in self.activities_data:
+            if existing_activity["name"].lower() == activity_obj.name.lower():
+                print(f"[WARNING]: Activity '{activity_obj.name}' already exists! Skipped.")
+                return False
+
         entry = {"name": activity_obj.name, "category": activity_obj.category}
         if isinstance(activity_obj, StudyTask):
             entry["deadline"] = activity_obj.deadline
@@ -53,9 +72,10 @@ class StudentTracker:
         self.activities_data.append(entry)
         self.save_to_file()
         print(f"Added and saved: {activity_obj.name}")
+        return True
 
     def display_history(self):
-        print(f"\n--- Full History for {self.student_name} ---")
+        print(f"--- Full History for {self.student_name} ---")
         if not self.activities_data:
             print("No records found in file.")
         else:
@@ -68,11 +88,11 @@ if __name__ == "__main__":
     print("Reading existing data...")
     tracker.display_history()
     
-    print("\nAdding new activities for today...")
-    task = StudyTask("History Essay", "Wednesday")
-    run = Exercise("Gym Session", 60, 450)
+    print("\nProcessing new entries...")
+    task1 = StudyTask("Advanced Programming Lab", "Thursday")
+    task2 = StudyTask("Advanced Programming Lab", "Thursday")
     
-    tracker.add_activity(task)
-    tracker.add_activity(run)
+    tracker.add_activity(task1)
+    tracker.add_activity(task2)
     
     tracker.display_history()
