@@ -1,4 +1,5 @@
 import json
+import uuid
 
 def log_activity(func):
     def wrapper(*args, **kwargs):
@@ -62,7 +63,12 @@ class StudentTracker:
                 print(f"[WARNING]: Activity '{activity_obj.name}' already exists! Skipped.")
                 return False
 
-        entry = {"name": activity_obj.name, "category": activity_obj.category}
+        entry = {
+            "id": str(uuid.uuid4())[:8],
+            "name": activity_obj.name, 
+            "category": activity_obj.category
+        }
+        
         if isinstance(activity_obj, StudyTask):
             entry["deadline"] = activity_obj.deadline
         elif isinstance(activity_obj, Exercise):
@@ -75,24 +81,60 @@ class StudentTracker:
         return True
 
     def display_history(self):
-        print(f"--- Full History for {self.student_name} ---")
+        print(f"\n--- Full History for {self.student_name} ---")
         if not self.activities_data:
             print("No records found in file.")
         else:
             for item in self.activities_data:
-                print(item)
+                act_id = item.get("id", "N/A")
+                
+                if item["category"] == "Study":
+                    print(f"ID: {act_id} | [Study] {item['name']} (Deadline: {item['deadline']})")
+                elif item["category"] == "Sport":
+                    print(f"ID: {act_id} | [Sport] {item['name']} ({item['duration']} min, {item['calories']} kcal)")
 
-if __name__ == "__main__":
+def main():
     tracker = StudentTracker("Nurali")
     
-    print("Reading existing data...")
-    tracker.display_history()
-    
-    print("\nProcessing new entries...")
-    task1 = StudyTask("Advanced Programming Lab", "Thursday")
-    task2 = StudyTask("Advanced Programming Lab", "Thursday")
-    
-    tracker.add_activity(task1)
-    tracker.add_activity(task2)
-    
-    tracker.display_history()
+    while True:
+        print("\n=== Student Activity Tracker ===")
+        print("1. View Activity History")
+        print("2. Add Study Task")
+        print("3. Add Sports Exercise")
+        print("4. Exit")
+        
+        choice = input("Choose an option (1-4): ").strip()
+        
+        if choice == "1":
+            tracker.display_history()
+            
+        elif choice == "2":
+            name = input("Enter study task name: ").strip()
+            deadline = input("Enter deadline (e.g., Monday, 23:59): ").strip()
+            if name and deadline:
+                task = StudyTask(name, deadline)
+                tracker.add_activity(task)
+            else:
+                print("[Error]: Fields cannot be empty.")
+                
+        elif choice == "3":
+            name = input("Enter exercise name: ").strip()
+            try:
+                duration = int(input("Enter duration (minutes): "))
+                calories = int(input("Enter calories burned: "))
+                if name:
+                    run = Exercise(name, duration, calories)
+                    tracker.add_activity(run)
+                else:
+                    print("[Error]: Name cannot be empty.")
+            except ValueError:
+                print("[Error]: Duration and Calories must be numbers! Action cancelled.")
+                
+        elif choice == "4":
+            print("Exiting application. Goodbye!")
+            break
+        else:
+            print("[Error]: Invalid choice. Please enter 1-4.")
+
+if __name__ == "__main__":
+    main()

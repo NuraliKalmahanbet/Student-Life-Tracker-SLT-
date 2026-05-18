@@ -20,5 +20,18 @@
         "name": "Advanced Programming Lab",
         "category": "Study",
         "deadline": "Thursday"
+    },
+    {
+        "id": "44b8f0f4",
+        "name": "Calculus 2 Assignment",
+        "category": "Study",
+        "deadline": "Friday 23:59"
+    },
+    {
+        "id": "c3c8fec3",
+        "name": "Evening Run",
+        "category": "Sport",
+        "duration": 40,
+        "calories": 350
     }
 ]
